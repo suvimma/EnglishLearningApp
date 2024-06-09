@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'flashcards/style.css' %}">
+    <link rel="icon" href="{% static 'flashcards/fire.png' %}">
+</head>
+<body>
+    <header>
+        <img src="{% static 'flashcards/logo2.png' %}" alt="Logo" class="logo">
+    </header>
+    <h1>Welcome to the English Learning App</h1>
+    <p><a href="{% url 'login' %}">Log in</a> or <a href="{% url 'register' %}">Register</a></p>
+    <footer>
+        <img src="{% static 'flashcards/reviews.png' %}" alt="Reviews" class="reviews-image">
+    </footer>
+</body>
+</html>
+

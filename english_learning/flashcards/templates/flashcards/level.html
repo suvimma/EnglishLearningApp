@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="mt-5 text-center">
+    <h1>Wybierz poziom</h1>
+    <div class="list-group">
+        {% for level in levels %}
+        <a href="{% url 'learn' level %}" class="list-group-item list-group-item-action">Poziom {{ level }}</a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

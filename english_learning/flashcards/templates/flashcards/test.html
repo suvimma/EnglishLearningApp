@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Test - Level {{ level }}</h1>
+    <form action="{% url 'submit_test' %}" method="post">
+        {% csrf_token %}
+        <ol>
+            {% for word in words %}
+            <li>
+                <p>{{ word.english_word }}</p>
+                <input type="hidden" name="question" value="{{ word.english_word }}">
+                <input type="text" name="answer" required>
+            </li>
+            {% endfor %}
+        </ol>
+        <button type="submit" class="btn btn-primary mt-3">Submit</button>
+    </form>
+</div>
+{% endblock %}

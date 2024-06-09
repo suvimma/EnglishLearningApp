@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="mt-5 text-center">
+    <h1>Fiszki</h1>
+    <div id="flashcards-container">
+        <div id="flashcard" class="card">
+            <div class="card-front">
+                <h3 class="card-title" id="english-word"></h3>
+            </div>
+            <div class="card-back">
+                <h3 class="card-title" id="polish-word"></h3>
+            </div>
+        </div>
+    </div>
+    <div class="mt-4">
+        <button class="btn btn-primary" id="prev-button">Poprzednia</button>
+        <button class="btn btn-primary" id="next-button">Nastepna</button>
+        <button class="btn btn-secondary" id="shuffle-button">Tasowanie</button>
+    </div>
+    <p id="progress-text" class="mt-2">1/{{ words_json|length }}</p>
+</div>
+
+<script id="words-data" type="application/json">{{ words_json|safe }}</script>
+<script src="{% static 'flashcards/flipCard.js' %}"></script>
+{% endblock %}

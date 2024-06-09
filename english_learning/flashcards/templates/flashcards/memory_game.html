@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5 text-center">
+    <h1>Memory Game - Set {{ set_number }} - Level {{ level }}</h1>
+    <div class="memory-game">
+        {% for word in words %}
+        <div class="memory-card" data-word="{{ word.english_word }}">
+            <div class="card-front">?</div>
+            <div class="card-back">{{ word.english_word }}</div>
+        </div>
+        <div class="memory-card" data-word="{{ word.english_word }}">
+            <div class="card-front">?</div>
+            <div class="card-back">{{ word.polish_word }}</div>
+        </div>
+        {% endfor %}
+    </div>
+    <p>Time left: <span id="time-left">60</span> seconds</p>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let cards = document.querySelectorAll('.memory-card');
+        let hasFlippedCard = false;
+        let lockBoard = false;
+        let firstCard, secondCard;
+        let matchCount = 0;
+
+        function flipCard() {
+            if (lockBoard) return;
+            if (this === firstCard) return;
+
+            this.classList.add('flip');
+
+            if (!hasFlippedCard) {
+                hasFlippedCard = true;
+                firstCard = this;
+                return;
+            }
+
+            secondCard = this;
+            checkForMatch();
+        }
+
+        function checkForMatch() {
+            let isMatch = firstCard.dataset.word === secondCard.dataset.word;
+
+            if (isMatch) {
+                disableCards();
+                matchCount++;
+                if (matchCount === {{ words|length }}) {
+                    setTimeout(() => alert('Congratulations! You found all pairs!'), 500);
+                }
+            } else {
+                unflipCards();
+            }
+        }
+
+        function disableCards() {
+            firstCard.removeEventListener('click', flipCard);
+            secondCard.removeEventListener('click', flipCard);
+
+            resetBoard();
+        }
+
+        function unflipCards() {
+            lockBoard = true;
+
+            setTimeout(() => {
+                firstCard.classList.remove('flip');
+                secondCard.classList.remove('flip');
+
+                resetBoard();
+            }, 1500);
+        }
+
+        function resetBoard() {
+            [hasFlippedCard, lockBoard] = [false, false];
+            [firstCard, secondCard] = [null, null];
+        }
+
+        (function shuffle() {
+            cards.forEach(card => {
+                let randomPos = Math.floor(Math.random() * cards.length);
+                card.style.order = randomPos;
+            });
+        })();
+
+        cards.forEach(card => card.addEventListener('click', flipCard));
+
+        let timeLeft = 60;
+        const timerElement = document.getElementById('time-left');
+        const timer = setInterval(() => {
+            timeLeft--;
+            timerElement.textContent = timeLeft;
+            if (timeLeft === 0) {
+                clearInterval(timer);
+                alert('Time is up! Game over.');
+                cards.forEach(card => card.removeEventListener('click', flipCard));
+            }
+        }, 1000);
+    });
+</script>
+
+<style>
+    .memory-game {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 10px;
+        justify-content: center;
+    }
+
+    .memory-card {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        width: 100px;
+        height: 100px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        perspective: 1000px;
+    }
+
+        .memory-card.flip .card-front {
+            transform: rotateY(180deg);
+        }
+
+        .memory-card.flip .card-back {
+            transform: rotateY(0);
+        }
+
+        .memory-card .card-front, .memory-card .card-back {
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+            backface-visibility: hidden;
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5em;
+        }
+
+        .memory-card .card-front {
+            background-color: #ffeb3b;
+            color: #000;
+            transform: rotateY(0);
+        }
+
+        .memory-card .card-back {
+            background-color: #f44336;
+            color: #fff;
+            transform: rotateY(-180deg);
+        }
+</style>
+{% endblock %}
